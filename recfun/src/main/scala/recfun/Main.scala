@@ -15,8 +15,8 @@ object Main {
    * Exercise 1
    */
   def pascal(c: Int, r: Int): Int = {
-    def isEdge(c: Int, r: Int): Boolean ={
-      if (c==0) true else if (c==r) true else false
+    def isEdge(c: Int, r: Int) = {
+      c == 0 || c == r
     }
     if (isEdge(c,r))
       1
@@ -30,35 +30,57 @@ object Main {
    */
   def balance(chars: List[Char]): Boolean = {
 
-    def innerBalance(chars: List[Char], openFlag: Boolean): Boolean = {
-      //      println("---------")
-      //      println("chars " + chars)
-      //      println("openFlag " + openFlag)
+    def innerBalance(chars: List[Char], open: Int): Boolean = {
 
       if (chars.isEmpty) {
         println("chars.isEmpty")
         true
       } else {
         if (chars.head == '(')
-          innerBalance(chars.tail, true)
+          innerBalance(chars.tail, open + 1)
         else {
           if (chars.head == ')')
-            if (openFlag)
-              innerBalance(chars.tail, false)
+            if (open > 0)
+              innerBalance(chars.tail, open - 1)
             else false
           else
-            innerBalance(chars.tail, openFlag)
+            innerBalance(chars.tail, open)
         }
       }
     }
    
-    innerBalance(chars,false)
-    
-    
+    innerBalance(chars,0)
   }
 
   /**
    * Exercise 3
    */
-  def countChange(money: Int, coins: List[Int]): Int = 0
+  def countChange(money: Int, coins: List[Int]): Int = {
+    
+    def corte (sum : Int) = {
+    	(money >= sum)
+    }
+    
+    def calc(presentValue:Int, acc:Int, allCoins: List[Int]): Int = {
+      if (allCoins.isEmpty)
+        acc
+        else {          
+           if (presentValue > money) 0
+           else 
+             if (presentValue==money) 
+               1
+               else 0
+                 
+                         }
+    }
+    
+    
+    def innerCountChange(remainingCoins: List[Int], acc : Int ):Int = {
+		  acc + calc(remainingCoins.head, 0, coins) +  innerCountChange(remainingCoins.tail, acc)
+    }
+    
+    //money == 0? ???
+    innerCountChange(coins.sorted, 0)
+  }    
+    
 }
