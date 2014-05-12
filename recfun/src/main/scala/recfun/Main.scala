@@ -29,27 +29,28 @@ object Main {
    * (if (zero? x) max (/ 1 x))
    */
   def balance(chars: List[Char]): Boolean = {
-    
-    def innerBalance(chars: List[Char], openFlag :Boolean):Boolean = {
-      println("---------")
-      println("chars " + chars )
-       println("openFlag " + openFlag )
-    		if (chars.isEmpty) {
-    			println("chars.isEmpty")
-    			true
-    		}
-    		else{    			
-    			if (chars.head == '(')
-    				innerBalance(chars.tail, true)
-    				else
-    					if (chars.head == ')') 
-    						if (openFlag)
-    							innerBalance(chars.tail, false)
-    							else false
-    							else
-    								innerBalance(chars.tail, openFlag)     
-    		}
+
+    def innerBalance(chars: List[Char], openFlag: Boolean): Boolean = {
+      //      println("---------")
+      //      println("chars " + chars)
+      //      println("openFlag " + openFlag)
+
+      if (chars.isEmpty) {
+        println("chars.isEmpty")
+        true
+      } else {
+        if (chars.head == '(')
+          innerBalance(chars.tail, true)
+        else {
+          if (chars.head == ')')
+            if (openFlag)
+              innerBalance(chars.tail, false)
+            else false
+          else
+            innerBalance(chars.tail, openFlag)
+        }
       }
+    }
    
     innerBalance(chars,false)
     
