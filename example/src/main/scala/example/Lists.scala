@@ -24,14 +24,16 @@ object Lists {
    * @return The sum of all elements in `xs`
    */
   def sum(xs: List[Int]): Int = {
-    def innerSum(acc: Int, xs: List[Int]):Int = {
-      if (!xs.isEmpty){
-    	  innerSum(acc+ xs.head, xs.tail)
-      }
-      else acc
-    }
-    
-    innerSum(0, xs)
+      if (xs.isEmpty)  0
+      else xs.head + sum(xs.tail)
+//    def innerSum(acc: Int, xs: List[Int]):Int = {
+//      if (!xs.isEmpty){
+//    	  innerSum(acc+ xs.head, xs.tail)
+//      }
+//      else acc
+//    }
+//    
+//    innerSum(0, xs)
   }
 
   /**
@@ -47,5 +49,15 @@ object Lists {
    * @return The largest element in `xs`
    * @throws java.util.NoSuchElementException if `xs` is an empty list
    */
-  def max(xs: List[Int]): Int = 0
+  def max(xs: List[Int]): Int = {
+    def innerMax(max : Int, xs: List[Int]):Int = {
+      if (xs.isEmpty) max
+      else
+        if (xs.head > max) xs.head
+        else innerMax(max, xs.tail)
+    } 
+        
+    if (xs.isEmpty) throw new NoSuchElementException("empty list is not allowed")
+    else innerMax(xs.head, xs.tail)
+  }
 }
