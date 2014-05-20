@@ -143,26 +143,36 @@ class FunSetSuite extends FunSuite {
 
   test("forall Todo el conjunto es distinto de cero") {
     new TestSets {
-      assert(! forall(union(s2, s3), (x => x == 0)), "Todo el conjunto es distinto de cero")
+      assert(!forall(union(s2, s3), (x => x == 0)), "Todo el conjunto es distinto de cero")
     }
   }
 
-  
   test("forall probando extremos +1000 -1000 es distinto de cero") {
-	  new TestSets {
-		  assert(! forall(union(singletonSet(- 1000), singletonSet(1000)), (x => x == 0)), "Todo el conjunto es distinto de cero")
-	  }
+    new TestSets {
+      assert(!forall(union(singletonSet(-1000), singletonSet(1000)), (x => x == 0)), "Todo el conjunto es distinto de cero")
+    }
   }
 
   test("exists probando extremos +1000 -1000 0 es igual a cero") {
-	  new TestSets {
-		  assert( exists(union(singletonSet(- 1000), union(singletonSet(1000),singletonSet(0))), (x => x == 0)), "Todo el conjunto es igual a cero")
-	  }
-  }
-  test("exists probando 1 2 es igual a cero") {
-	  new TestSets {
-		  assert( ! exists(union(s1, s2), (x => x == 0)), "Todo el conjunto es igual a cero")
-	  }
+    new TestSets {
+      assert(exists(union(singletonSet(-1000), union(singletonSet(1000), singletonSet(0))), (x => x == 0)), "Todo el conjunto es igual a cero")
+    }
   }
 
+  test("exists probando 1 2 es igual a cero") {
+    new TestSets {
+      assert(!exists(union(s1, s2), (x => x == 0)), "Todo el conjunto es igual a cero")
+    }
+  }
+
+  test("map convierte un set de un elemento a incrementando en uno cada elemento") {
+    new TestSets {
+      val source = union(s1, s2)
+      assert(contains(map(source, (x => x + 2)), 3), "El set contener al 3")
+      assert(contains(map(source, (x => x + 2)), 4), "El set contener al 4")
+      assert(!contains(map(source, (x => x + 2)), 5), "El set no debe contener al 5")
+      assert(!contains(map(source, (x => x + 2)), 2), "El set no debe contener al 2")
+    }
+  }
+  
 }
