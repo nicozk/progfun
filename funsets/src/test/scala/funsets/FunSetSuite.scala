@@ -75,6 +75,9 @@ class FunSetSuite extends FunSuite {
     val s1 = singletonSet(1)
     val s2 = singletonSet(2)
     val s3 = singletonSet(3)
+    val s4 = singletonSet(4)
+    val s5 = singletonSet(5)
+    val s1000 = singletonSet(1000)
   }
 
   /**
@@ -153,12 +156,30 @@ class FunSetSuite extends FunSuite {
     }
   }
 
+  test("forall solo con  +1000") {
+    new TestSets {
+      assert(forall(singletonSet(1000), (x => x == 1000)), "epa!")
+    }
+  }
+  
+  test("forall solo con  -1000") {
+    new TestSets {
+      assert(forall(singletonSet(-1000), (x => x == -1000)), "epa!")
+    }
+  }
+  
   test("exists probando extremos +1000 -1000 0 es igual a cero") {
     new TestSets {
       assert(exists(union(singletonSet(-1000), union(singletonSet(1000), singletonSet(0))), (x => x == 0)), "Todo el conjunto es igual a cero")
     }
   }
 
+  test("exists probando extremos +1000") {
+    new TestSets {
+      assert(exists(union(singletonSet(-1000), union(singletonSet(1000), singletonSet(0))), (x => x == 1000)), "Todo el conjunto es igual a cero")
+    }
+  }
+    
   test("exists probando 1 2 es igual a cero") {
     new TestSets {
       assert(!exists(union(s1, s2), (x => x == 0)), "Todo el conjunto es igual a cero")
@@ -168,10 +189,24 @@ class FunSetSuite extends FunSuite {
   test("map convierte un set de un elemento a incrementando en uno cada elemento") {
     new TestSets {
       val source = union(s1, s2)
-      assert(contains(map(source, (x => x + 2)), 3), "El set contener al 3")
-      assert(contains(map(source, (x => x + 2)), 4), "El set contener al 4")
-      assert(!contains(map(source, (x => x + 2)), 5), "El set no debe contener al 5")
-      assert(!contains(map(source, (x => x + 2)), 2), "El set no debe contener al 2")
+      def f(x: Int): Int = x + 2
+      assert(contains(map(source, f), 3), "El set deberia contener al 3")
+      assert(contains(map(source, f), 4), "El set deberia contener al 4")
+      assert(!contains(map(source, f), 5), "El set no debe contener al 5")
+      assert(!contains(map(source, f), 2), "El set no debe contener al 2")
+    }
+  }
+
+  test("map convierte {1,3,4,5,1000} a {0,2,3,4,999} ") {
+    new TestSets {
+      val source = union(s1, union(s3, union(s4, union(s5, s1000))))
+      def f(x: Int): Int = x - 1
+      assert(contains(map(source, f), 0), "El set deberia contener al 0")
+      assert(contains(map(source, f), 2), "El set deberia contener al 2")
+      assert(contains(map(source, f), 3), "El set deberia contener al 3")
+      assert(contains(map(source, f), 4), "El set deberia contener al 4")
+      assert(contains(map(source, f), 999), "El set deberia contener al 999")
+      
     }
   }
   
