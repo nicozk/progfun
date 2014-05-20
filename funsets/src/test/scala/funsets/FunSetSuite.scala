@@ -14,7 +14,6 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class FunSetSuite extends FunSuite {
 
-
   /**
    * Link to the scaladoc - very clear and detailed tutorial of FunSuite
    *
@@ -47,30 +46,29 @@ class FunSetSuite extends FunSuite {
     assert(1 + 2 === 3)
   }
 
-  
   import FunSets._
 
   test("contains is implemented") {
     assert(contains(x => true, 100))
   }
-  
+
   /**
    * When writing tests, one would often like to re-use certain values for multiple
    * tests. For instance, we would like to create an Int-set and have multiple test
    * about it.
-   * 
+   *
    * Instead of copy-pasting the code for creating the set into every test, we can
    * store it in the test class using a val:
-   * 
+   *
    *   val s1 = singletonSet(1)
-   * 
+   *
    * However, what happens if the method "singletonSet" has a bug and crashes? Then
    * the test methods are not even executed, because creating an instance of the
    * test class fails!
-   * 
+   *
    * Therefore, we put the shared values into a separate trait (traits are like
    * abstract classes), and create an instance inside each test method.
-   * 
+   *
    */
 
   trait TestSets {
@@ -82,15 +80,15 @@ class FunSetSuite extends FunSuite {
   /**
    * This test is currently disabled (by using "ignore") because the method
    * "singletonSet" is not yet implemented and the test would fail.
-   * 
+   *
    * Once you finish your implementation of "singletonSet", exchange the
    * function "ignore" by "test".
    */
   test("singletonSet(1) contains 1") {
-    
+
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
-     * to the values "s1" to "s3". 
+     * to the values "s1" to "s3".
      */
     new TestSets {
       /**
@@ -109,32 +107,62 @@ class FunSetSuite extends FunSuite {
       assert(!contains(s, 3), "Union 3")
     }
   }
-  
-   test("intersect contains all elements that are in s and t") {
+
+  test("intersect contains all elements that are in s and t") {
     new TestSets {
-      val s = intersect(s1,union(s1,s2))
+      val s = intersect(s1, union(s1, s2))
       assert(contains(s, 1), "elem 1")
       assert(!contains(s, 2), "elem 2")
       assert(!contains(s, 3), "elem 3")
-   }
+    }
   }
-   
-   test("diff contains elements that are of `s` that are not in `t`") {
+
+  test("diff contains elements that are of `s` that are not in `t`") {
     new TestSets {
-      val s = diff(union(s1,s2), s1)
+      val s = diff(union(s1, s2), s1)
       assert(contains(s, 2), "elem 2")
       assert(!contains(s, 1), "elem 1")
       assert(!contains(s, 3), "elem 2")
-   }
-   }
-   
-    test("filter") {
-    new TestSets {
-      val s = filter(union(s1,s2), s1)
-      assert(contains(s, 2), "elem 2")
-      assert(!contains(s, 1), "elem 1")
-      assert(!contains(s, 3), "elem 2")
-   }
+    }
   }
-   
+
+  test("filter") {
+    new TestSets {
+      val s = filter(union(s1, union(s2, s3)), (x => x > 1))
+      assert(contains(s, 2), "elem 2")
+      assert(contains(s, 3), "elem 3")
+      assert(!contains(s, 1), "elem 1")
+    }
+  }
+
+  test("forall Todo el conjunto es mayor q uno") {
+    new TestSets {
+      assert(forall(union(s2, s3), (x => x > 1)), "Todo el conjunto es mayor q uno")
+    }
+  }
+
+  test("forall Todo el conjunto es distinto de cero") {
+    new TestSets {
+      assert(! forall(union(s2, s3), (x => x == 0)), "Todo el conjunto es distinto de cero")
+    }
+  }
+
+  
+  test("forall probando extremos +1000 -1000 es distinto de cero") {
+	  new TestSets {
+		  assert(! forall(union(singletonSet(- 1000), singletonSet(1000)), (x => x == 0)), "Todo el conjunto es distinto de cero")
+	  }
+  }
+
+  test("exists probando extremos +1000 -1000 0 es igual a cero") {
+	  new TestSets {
+		  assert( exists(union(singletonSet(- 1000), union(singletonSet(1000),singletonSet(0))), (x => x == 0)), "Todo el conjunto es igual a cero")
+	  }
+  }
+  test("exists probando 1 2 es igual a cero") {
+	  new TestSets {
+		  assert( ! exists(union(s1, s2), (x => x == 0)), "Todo el conjunto es igual a cero")
+	  }
+  }
+
 }
