@@ -16,6 +16,7 @@ class TweetSetSuite extends FunSuite {
     val set4c = set3.incl(c)
     val set4d = set3.incl(d)
     val set5 = set4c.incl(d)
+    val uglySet = set1.incl(new Tweet("b", "b body", 20)).incl(new Tweet("a", "a body", 30)).incl(new Tweet("c", "c body", 7))
   }
 
   def asSet(tweets: TweetSet): Set[Tweet] = {
@@ -37,7 +38,7 @@ class TweetSetSuite extends FunSuite {
       assert(size(set5.filter(tw => tw.user == "a")) === 1)
     }
   }
-  
+
   test("filter: retweets >1 on set5") {
     new TestSets {
       assert(size(set5.filter(tw => tw.retweets > 1)) === 4)
@@ -50,10 +51,14 @@ class TweetSetSuite extends FunSuite {
     }
   }
 
+  test("filter: tree with left and right branches") {
+    new TestSets {
+      assert(size(uglySet.filter(tw => tw.user == "a")) === 1)
+    }
+  }
+
   test("union: set4c and set4d") {
     new TestSets {
-      println ("set4c " + set4c)
-      println ("set4d " + set4d)
       assert(size(set4c.union(set4d)) === 4)
     }
   }
@@ -70,6 +75,26 @@ class TweetSetSuite extends FunSuite {
     }
   }
 
+  test("mostRetweeted: set5") {
+    new TestSets {
+      assert(set5.mostRetweeted.user == "a")
+    }
+  }
+  
+    test("mostRetweeted: uglySet") {
+    new TestSets {
+      assert(uglySet.mostRetweeted.user == "a")
+    }
+  }
+  
+  test("mostRetweeted: empty Set") {
+    new TestSets {
+      intercept[NoSuchElementException] {
+    	  set1.mostRetweeted.user == "a"       
+      }
+    }
+  }
+    
   test("descending: set5") {
     new TestSets {
       val trends = set5.descendingByRetweet

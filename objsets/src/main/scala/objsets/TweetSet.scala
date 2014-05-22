@@ -2,6 +2,7 @@ package objsets
 
 import common._
 import TweetReader._
+import java.util.NoSuchElementException
 
 /**
  * A class to represent tweets.
@@ -68,7 +69,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def mostRetweeted: Tweet = ???
+  def mostRetweeted: Tweet
 
   /**
    * Returns a list containing all tweets of this set, sorted by retweet count
@@ -107,6 +108,7 @@ abstract class TweetSet {
    * This method takes a function and applies it to every element in the set.
    */
   def foreach(f: Tweet => Unit): Unit
+
 }
 
 class Empty extends TweetSet {
@@ -128,9 +130,28 @@ class Empty extends TweetSet {
   def union(that: TweetSet): TweetSet = that
 
   override def toString: String = "[Empty]"
+
+  def mostRetweeted: Tweet = throw new NoSuchElementException
 }
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
+
+  def mostRetweeted: Tweet = {
+    def bla(elem: Tweet, ts: TweetSet): Tweet = {
+      if (ts.isInstanceOf[Empty]) elem
+      else {
+        val branchValue = ts.mostRetweeted
+        if (elem.retweets >= branchValue.retweets) elem
+        else branchValue
+      }
+    }
+    
+    val elem1 = bla(elem, left)
+    val elem2 = bla(elem, right)
+    
+    if (elem1.retweets >= elem2.retweets) elem1
+    else elem2
+  }
 
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
     if (p(elem)) {
@@ -141,7 +162,7 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
 
   def union(that: TweetSet): TweetSet = {
-      left.union(right.union(that.incl(this.elem)))
+    left.union(right.union(that.incl(this.elem)))
   }
 
   /**
