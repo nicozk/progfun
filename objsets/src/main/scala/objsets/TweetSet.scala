@@ -152,8 +152,8 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
 
   def mostRetweetedAcc(tweet: Tweet): Tweet = {
-    if (tweet.retweets >= elem.retweets) left.mostRetweetedAcc(right.mostRetweetedAcc(tweet))
-    else left.mostRetweetedAcc(right.mostRetweetedAcc(elem))
+    val max = if (tweet.retweets >= elem.retweets) tweet else elem
+    left.mostRetweetedAcc(right.mostRetweetedAcc(max))
   }
 
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
