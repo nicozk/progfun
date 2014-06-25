@@ -1,6 +1,7 @@
 package patmat
 
 import common._
+import scala.collection.immutable.Nil
 
 /**
  * Assignment 4: Huffman coding
@@ -26,9 +27,15 @@ object Huffman {
 
   // Part 1: Basics
 
-  def weight(tree: CodeTree): Int = ??? // tree match ...
+  def weight(tree: CodeTree): Int = tree match {
+    case l:Leaf => l.weight
+    case Fork(_,_,_,forkWeigth) => forkWeigth
+  }
 
-  def chars(tree: CodeTree): List[Char] = ??? // tree match ...
+  def chars(tree: CodeTree): List[Char] = tree match{
+    case l:Leaf => List(l.char)
+    case f:Fork => f.chars
+  } 
 
   def makeCodeTree(left: CodeTree, right: CodeTree) =
     Fork(left, right, chars(left) ::: chars(right), weight(left) + weight(right))
@@ -71,7 +78,32 @@ object Huffman {
    *       println("integer is  : "+ theInt)
    *   }
    */
-  def times(chars: List[Char]): List[(Char, Int)] = ???
+  def times(chars: List[Char]): List[(Char, Int)] = {
+	def timesAux(chars: List[Char], pairs : List[(Char, Int)] ) : List[(Char, Int)] = {
+
+	  def incrementarPairs(char : Char, pairs : List[(Char, Int)]): (Char, Int) = {
+	    
+	    def incrementarPosta(y:(Char, Int), ys: List[(Char, Int)]) : (Char, Int) = y match{
+	      case (theChar, theInt) => if (theChar == char) (char, theInt+1)
+	    		  					else incrementarPairs(char , ys)
+	    }
+	    
+	    pairs match {
+	      case Nil => (char, 1);
+	      case y::ys => incrementarPosta(y, ys) 
+	    }
+	  }
+	  
+	  chars match{
+	  case Nil => pairs
+	  case x::xs => incrementarPairs(x, pairs)::timesAux(xs, pairs)
+	  }
+	    
+	}
+	
+    
+    timesAux(chars, List())
+  }
 
   /**
    * Returns a list of `Leaf` nodes for a given frequency table `freqs`.
@@ -80,12 +112,34 @@ object Huffman {
    * head of the list should have the smallest weight), where the weight
    * of a leaf is the frequency of the character.
    */
-  def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = ???
+  def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = {
+    def makeOrderedLeafListAux(freqs: List[(Char, Int)] , list : List[Leaf]) : List[Leaf] = {
+      
+      def insert(newLeaf : Leaf , otherList : List[Leaf]) : List[Leaf] = {
+    	  otherList match {
+    	    case Nil => newLeaf::otherList
+    	    case l::ls => if (newLeaf.weight > l.weight) l::insert(newLeaf, ls)
+    	    			else newLeaf::l::ls 
+    	  }
+      } 
+      
+      freqs match {
+        case Nil => list
+        case x::xs => makeOrderedLeafListAux(xs, insert(Leaf(x._1, x._2), list)) 
+      }
+    }
+    
+    makeOrderedLeafListAux(freqs, List())
+  } 
+    
 
   /**
    * Checks whether the list `trees` contains only one single code tree.
    */
-  def singleton(trees: List[CodeTree]): Boolean = ???
+  def singleton(trees: List[CodeTree]): Boolean = trees match {    
+    case x::Nil => true
+    case _ => false
+  }
 
   /**
    * The parameter `trees` of this function is a list of code trees ordered
@@ -99,7 +153,12 @@ object Huffman {
    * If `trees` is a list of less than two elements, that list should be returned
    * unchanged.
    */
-  def combine(trees: List[CodeTree]): List[CodeTree] = ???
+  def combine(trees: List[CodeTree]): List[CodeTree] = trees match {
+    case Nil => trees
+    case x::Nil => trees
+    case x::y::xs => makeCodeTree(x,y)::xs
+    
+  }
 
   /**
    * This function will be called in the following way:
@@ -118,15 +177,22 @@ object Huffman {
    *    the example invocation. Also define the return type of the `until` function.
    *  - try to find sensible parameter names for `xxx`, `yyy` and `zzz`.
    */
-  def until(xxx: ???, yyy: ???)(zzz: ???): ??? = ???
-
+  def until(simpleton: List[CodeTree] => Boolean, combined : List[CodeTree] => List[CodeTree] )(trees : List[CodeTree]): List[CodeTree] = {
+    if (simpleton(trees)) trees
+    else until(simpleton,combined) (combined(trees)) 
+  }
+  
   /**
    * This function creates a code tree which is optimal to encode the text `chars`.
    *
    * The parameter `chars` is an arbitrary text. This function extracts the character
    * frequencies from that text and creates a code tree based on them.
    */
-  def createCodeTree(chars: List[Char]): CodeTree = ???
+  def createCodeTree(chars: List[Char]): CodeTree = {
+    val list = makeOrderedLeafList(times(chars))
+    val x::xs = until( singleton , combine) (list)
+    x
+  }
 
 
 
