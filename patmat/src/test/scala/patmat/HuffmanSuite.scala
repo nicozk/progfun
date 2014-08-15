@@ -11,7 +11,9 @@ import patmat.Huffman._
 class HuffmanSuite extends FunSuite {
   trait TestTrees {
     val t1 = Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5)
-    val t2 = Fork(Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5), Leaf('d',4), List('a','b','d'), 9)
+    val t2 = Fork(	Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5), 
+    				Fork(Leaf('d',3), Leaf('c',1), List('d','c'), 4),
+    				List('a','b','c','d'), 9)
   }
 
   test("weight of a larger tree") {
@@ -22,7 +24,7 @@ class HuffmanSuite extends FunSuite {
 
   test("chars of a larger tree") {
     new TestTrees {
-      assert(chars(t2) === List('a','b','d'))
+      assert(chars(t2) === List('a','b','c','d'))
     }
   }
 
@@ -39,9 +41,44 @@ class HuffmanSuite extends FunSuite {
     assert(combine(leaflist) === List(Fork(Leaf('e',1),Leaf('t',2),List('e', 't'),3), Leaf('x',4)))
   }
 
+  test("encode test") {
+    new TestTrees {
+      assert(encode(t1)("ab".toList) === List(0,1))
+    }
+  }
+  
+  test("encode test 2") {
+    new TestTrees {
+      assert(encode(t2)("abcd".toList) === List(0,0,0,1,1,1,1,0))
+    }
+  }
+  
   test("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
   }
+    
+  test("decode and encode a long text should be identity") {
+    new TestTrees {
+      assert(decode(t2, encode(t2)("abcd".toList)) === "abcd".toList)
+    }
+  }
+  test("convert to code table") {
+    new TestTrees {
+      assert(convert(t1) === List ( ('a',List(0)),('b',List(1))  ) )
+    }
+  }
+  
+  test("convert to code table 2") {
+    new TestTrees {
+      assert(convert(t2) === List ( ('a',List(0,0)),('b',List(0,1)),('d',List(1,0)),('c',List(1,1))  ) )
+    }
+  }
+  
+  test("codeBits") {
+    new TestTrees {
+      assert( codeBits(convert(t2))('a') === List(0,0) )
+    }
+  }  
 }

@@ -204,7 +204,29 @@ object Huffman {
    * This function decodes the bit sequence `bits` using the code tree `tree` and returns
    * the resulting list of characters.
    */
-  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = ???
+  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
+
+    def branchByBit(bit: Bit, fork: Fork, bitList: List[Bit]): List[Char] = {
+      if (bit == 0) decodeAux(fork.left, bitList)
+      else decodeAux(fork.right, bitList)
+    }
+    
+    def decodeAux(remainingTree: CodeTree, remainingBits: List[Bit]): List[Char] = remainingTree match {
+      case leaf: Leaf => leaf.char::decodeAux(tree, remainingBits)
+      case fork: Fork => 
+        remainingBits match {
+    				        case Nil => List()
+					        case bit :: bitList => branchByBit(bit, fork, bitList); 
+					      }
+    }
+
+    bits match {
+        case Nil => List()
+        case _ => decodeAux(tree, bits)
+    }
+    
+  }
+    	
 
   /**
    * A Huffman coding tree for the French language.
@@ -222,9 +244,7 @@ object Huffman {
   /**
    * Write a function that returns the decoded secret
    */
-  def decodedSecret: List[Char] = ???
-
-
+  def decodedSecret: List[Char] = decode(frenchCode, secret)
 
   // Part 4a: Encoding using Huffman tree
 
@@ -232,8 +252,30 @@ object Huffman {
    * This function encodes `text` using the code tree `tree`
    * into a sequence of bits.
    */
-  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+    
+    def encodeAux (charsAux: List[Char], treeAux: CodeTree, auxBitList : List[Bit]): List[Bit] = charsAux match {
+      case Nil => auxBitList
+      case charToEncode::remainingChars => treeAux match {
+      	case leaf: Leaf => 
+    	  if (leaf.char == charToEncode ) encodeAux(remainingChars, tree, auxBitList)
+    	  else List()
+      	case fork: Fork => 
+      		if(chars(fork.left).contains(charToEncode) ) 
+      			encodeAux(charsAux, fork.left, auxBitList:+0)
+      		else encodeAux(charsAux, fork.right, auxBitList:+1)
+      }
+    }
 
+    text match {
+      case Nil => List()
+      case _ => encodeAux(text, tree, List())
+    }
+  }
+  
+  val t1 = Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5)
+  
+  def encodedSecret: List[Bit] = encode(t1)("ab".toList)
 
   // Part 4b: Encoding using code table
 
@@ -243,8 +285,12 @@ object Huffman {
    * This function returns the bit sequence that represents the character `char` in
    * the code table `table`.
    */
-  def codeBits(table: CodeTable)(char: Char): List[Bit] = ???
+  def codeBits(table: CodeTable)(char: Char): List[Bit] = table match {
+    case Nil => List()
+    case (charToCompare, bits)::remainingTuples => if (charToCompare== char) bits else codeBits(remainingTuples)(char)
+  }
 
+//  def codeB: List[Bit] = codeBits(convert(t1))('b');
   /**
    * Given a code tree, create a code table which contains, for every character in the
    * code tree, the sequence of bits representing that character.
@@ -253,14 +299,31 @@ object Huffman {
    * a valid code tree that can be represented as a code table. Using the code tables of the
    * sub-trees, think of how to build the code table for the entire tree.
    */
-  def convert(tree: CodeTree): CodeTable = ???
+  def convert(tree: CodeTree): CodeTable = {
+ 
+    def convertAux(auxTree: CodeTree, auxBits: List[Bit]):CodeTable = auxTree match {
+      case leaf: Leaf => List((leaf.char, auxBits))
+      case fork: Fork => convertAux(fork.left, auxBits:+0):::convertAux(fork.right, auxBits:+1)
+    }
+    convertAux(tree, Nil)
+  }
 
+//  def conv: CodeTable = convert(t1);
+  
   /**
    * This function takes two code tables and merges them into one. Depending on how you
    * use it in the `convert` method above, this merge method might also do some transformations
    * on the two parameter code tables.
    */
-  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = ???
+  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = {
+
+    def aux (a: CodeTable, b: CodeTable, acc: CodeTable): CodeTable = a match {
+      case Nil => List() 
+	  case (charr, bits)::remainingTuples =>  List( (charr, bits:::codeBits(b)(charr) ) )
+    }
+    
+    aux(a, b, Nil)
+  }
 
   /**
    * This function encodes `text` according to the code tree `tree`.
