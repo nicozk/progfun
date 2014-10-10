@@ -196,11 +196,10 @@ object GradingFeedback {
       |score of %.2f.""".stripMargin.format(vMaxTestScore)
 
   private val testExecutionFailedMessage =
-    """An error occured while running our tests on your submission. This is not expected to
-      |happen, it means there is a bug in our testing environment.
+    """An error occurred while running our tests on your submission.
       |
       |In order for us to help you, please contact one of the teaching assistants and send
-      |them the entire feedback message that you recieved.""".stripMargin
+      |them the entire feedback message that you received.""".stripMargin
 
   // def so that we read the right value of vMaxStyleScore (initialize modifies it)
   private def perfectStyleMessage =

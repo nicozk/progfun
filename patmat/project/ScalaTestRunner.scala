@@ -127,7 +127,7 @@ object ScalaTestRunner {
         sys.error(msg)
 
       case e: Throwable =>
-        val msg = "Error occured while running the ScalaTest command\n"+ e.toString +"\n"+ out.toString()
+        val msg = "Error occurred while running the ScalaTest command\n"+ e.toString +"\n"+ out.toString()
         logError(msg)
         p.destroy()
         throw e

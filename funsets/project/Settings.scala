@@ -1,13 +1,8 @@
 object Settings {
   // when changing this, also look at 'scripts/gradingImpl' and the files in s3/settings
   // val courseId = "progfun-2012-001"
-  def baseURL(courseId: String) = 
-    courseId match {
-      case "progfun-004" | "reactive-001" =>
+  def baseURL(courseId: String) =
         "https://class.coursera.org/" + courseId
-      case "progfun-epfl-001" =>
-        "https://epfl.coursera.org/" + courseId
-    }
 
   def challengeUrl(courseId: String) = baseURL(courseId) + "/assignment/challenge"
 
@@ -32,7 +27,7 @@ object Settings {
   val submissionJarFileName = "submittedSrc.jar"
 
   // time in seconds that we give scalatest for running
-  val scalaTestTimeout = 320
+  val scalaTestTimeout = 1200
   val individualTestTimeout = 40
 
   // default weight of each test in a GradingSuite, in case no weight is given

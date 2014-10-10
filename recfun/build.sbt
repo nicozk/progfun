@@ -2,7 +2,7 @@ name <<= submitProjectName(pname => "progfun-"+ pname)
 
 version := "1.0.0"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.4"
 
 scalacOptions ++= Seq("-deprecation", "-feature")
 
@@ -46,47 +46,47 @@ libraryDependencies <++= (currentProject) { c =>
 
 // See documentation in ProgFunBuild.scala
 projectDetailsMap := {
-val currentCourseId = "progfun-004"
+val currentCourseId = "progfun-005"
 Map(
   "example" ->  ProjectDetails(
                   packageName = "example",
-                  assignmentPartId = "fTzFogNl",
+                  assignmentPartId = "gTzFogNl",
                   maxScore = 10d,
                   styleScoreRatio = 0.2,
                   courseId=currentCourseId),
   "recfun" ->     ProjectDetails(
                   packageName = "recfun",
-                  assignmentPartId = "3Rarn9Ki",
+                  assignmentPartId = "4Rarn9Ki",
                   maxScore = 10d,
                   styleScoreRatio = 0.2,
                   courseId=currentCourseId),
   "funsets" ->    ProjectDetails(
                   packageName = "funsets",
-                  assignmentPartId = "fBXOL7Rd",
+                  assignmentPartId = "gBXOL7Rd",
                   maxScore = 10d,
                   styleScoreRatio = 0.2,
                   courseId=currentCourseId),
   "objsets" ->    ProjectDetails(
                   packageName = "objsets",
-                  assignmentPartId = "15dMMEz7",
+                  assignmentPartId = "25dMMEz7",
                   maxScore = 10d,
                   styleScoreRatio = 0.2,
                   courseId=currentCourseId),
   "patmat" ->     ProjectDetails(
                   packageName = "patmat",
-                  assignmentPartId = "5gPmpcif",
+                  assignmentPartId = "6gPmpcif",
                   maxScore = 20d,
                   styleScoreRatio = 0.2,
                   courseId=currentCourseId),
   "forcomp" ->    ProjectDetails(
                   packageName = "forcomp",
-                  assignmentPartId = "fG3oZGIO",
+                  assignmentPartId = "gG3oZGIO",
                   maxScore = 10d,
                   styleScoreRatio = 0.2,
                   courseId=currentCourseId),
   "streams" ->    ProjectDetails(
                   packageName = "streams",
-                  assignmentPartId = "0WKgCFCi",
+                  assignmentPartId = "1WKgCFCi",
                   maxScore = 20d,
                   styleScoreRatio = 0.2,
                   courseId=currentCourseId),
